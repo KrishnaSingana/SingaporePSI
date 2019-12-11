@@ -18,18 +18,38 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="EO3-IV-8r0">
                                 <rect key="frame" x="0.0" y="88" width="414" height="808"/>
                             </mapView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ar0-4V-vYl">
+                                <rect key="frame" x="32" y="104" width="350" height="30"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="h21-0F-AzS"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="16"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="EO3-IV-8r0" secondAttribute="bottom" id="0Ep-eG-hL4"/>
+                            <constraint firstItem="Ar0-4V-vYl" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="5G2-Hm-znV"/>
+                            <constraint firstItem="Ar0-4V-vYl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="C08-7r-J8U"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="EO3-IV-8r0" secondAttribute="trailing" id="CIj-As-iJU"/>
                             <constraint firstItem="EO3-IV-8r0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="XQY-UC-QFj"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ar0-4V-vYl" secondAttribute="trailing" constant="32" id="ahs-vI-gbC"/>
                             <constraint firstItem="EO3-IV-8r0" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="h8n-4X-4or"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" title="Pollutant Standards Index" id="d9i-JT-QXe"/>
                     <connections>
+                        <outlet property="lblAppStatus" destination="Ar0-4V-vYl" id="Vy5-eB-P25"/>
                         <outlet property="mapView" destination="EO3-IV-8r0" id="Lst-Kp-A9i"/>
                     </connections>
                 </viewController>

@@ -11,10 +11,12 @@ import Foundation
 struct PollutionDetails: Codable {
     var regionsMetadata: [PSIMetaData]
     var items: [PSIItem]
-
+    var appInfo: AppInfo
+    
     private enum CodingKeys: String, CodingKey {
         case regionsMetadata = "region_metadata"
         case items = "items"
+        case appInfo = "api_info"
     }
 }
 
@@ -75,4 +77,8 @@ struct PSISubReading: Codable {
     var central: Double
     var south: Double
     var north: Double
+}
+
+struct AppInfo: Codable {
+    var status: String
 }

@@ -12,13 +12,16 @@ import MapKit
 class PSIViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
-
+    @IBOutlet weak var lblAppStatus: UILabel!
+    
     fileprivate let regionRadius: CLLocationDistance = 66000
     fileprivate let baseURL = "https://api.data.gov.sg/v1/environment/psi"
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        lblAppStatus.isHidden = true
+        
         // set initial location to Singapore
         let initialLocationOnMap = CLLocation(latitude: 1.35735, longitude: 103.82)
         self.centerMapOnLocation(location: initialLocationOnMap)
@@ -34,6 +37,27 @@ class PSIViewController: UIViewController {
         mapView.setRegion(coordinateRegion, animated: true)
     }
 
+    fileprivate func updateAppStatus(with appHealth : String) {
+        
+        let statusAttributedString = NSMutableAttributedString(
+            string: "App Status:- ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)])
+        let healthyColor = appHealth == "healthy" ? UIColor.green : UIColor.orange
+        statusAttributedString.append(
+            NSAttributedString(string: appHealth,
+                               attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
+                                            NSAttributedString.Key.foregroundColor: healthyColor]))
+        DispatchQueue.main.async {[unowned self] in
+            self.lblAppStatus.alpha = 0
+            self.lblAppStatus.isHidden = false
+            self.lblAppStatus.attributedText = statusAttributedString
+
+            UIView.animate(withDuration: 1.5, delay: 1.0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+                self.lblAppStatus.alpha = 1
+                self.view.layoutIfNeeded()
+            }, completion: nil)
+
+        }
+    }
 }
 
 extension PSIViewController: MKMapViewDelegate {
@@ -70,14 +94,16 @@ extension PSIViewController {
 
     //This method is used for getting pollutionApi URLRequest
     func getPollutionApiRequest(with date: String, dateTime: String?) -> URLRequest? {
-        if let request: URLRequest = self.baseRequestForURL(url: self.generatePollutionApiURL(with: date, dateTime: dateTime), method: "GET") {
+        if let request: URLRequest = self.baseRequestForURL(url:
+            self.generatePollutionApiURL(with: date, dateTime: dateTime), method: "GET") {
             return request
         }
         return nil
     }
 
     //This method is used to provide basic common information required while creating URLRequest.
-    private func baseRequestForURL(url: String, contentType: String? = nil, httpBody: [String: Any]? = nil, method: String) -> URLRequest? {
+    private func baseRequestForURL(url: String, contentType: String? = nil, httpBody: [String: Any]? = nil,
+                                   method: String) -> URLRequest? {
         if let url = URL(string: url) {
             let request = NSMutableURLRequest(url: url as URL)
             request.httpMethod = method
@@ -96,12 +122,13 @@ extension PSIViewController {
     fileprivate func getPollutionDetailsFor(date: String, dateTime: String?) {
         let defaultSession = URLSession(configuration: .default)
 
-        let dataTask = defaultSession.dataTask(with: self.getPollutionApiRequest(with: date, dateTime: dateTime)!) { data, response, error in
+        let dataTask = defaultSession.dataTask(with: self.getPollutionApiRequest(with: date, dateTime: dateTime)!)
+        { [unowned self] data, response, error in
             if (response as? HTTPURLResponse)?.statusCode == 200 {
                 guard let pollutionData = data else { return }
                 do {
                     let pollutionDetails = try JSONDecoder().decode(PollutionDetails.self, from: pollutionData)
-
+                    self.updateAppStatus(with: pollutionDetails.appInfo.status)
                 } catch {
                     print("JSON Data Parsing Error : \(error)")
                 }
