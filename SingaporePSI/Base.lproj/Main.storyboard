@@ -34,6 +34,52 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4LB-0A-cgX">
+                                <rect key="frame" x="32" y="770" width="76" height="76"/>
+                                <color key="backgroundColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="76" id="dHG-1i-EGK"/>
+                                    <constraint firstAttribute="width" constant="76" id="oGp-tc-pUh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="44"/>
+                                <state key="normal" title="N">
+                                    <color key="titleColor" systemColor="systemIndigoColor" red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="38"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="showNationalPollutionDetails:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sbX-Ic-LOy"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wvP-nV-b3q">
+                                <rect key="frame" x="32" y="474" width="282" height="280"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zDt-m7-cfL">
+                                        <rect key="frame" x="16" y="16" width="250" height="0.0"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="280" id="2Ib-K9-Ube"/>
+                                    <constraint firstAttribute="width" constant="282" id="8Dr-CI-rdw"/>
+                                    <constraint firstItem="zDt-m7-cfL" firstAttribute="top" secondItem="wvP-nV-b3q" secondAttribute="top" constant="16" id="a8j-Du-xfP"/>
+                                    <constraint firstItem="zDt-m7-cfL" firstAttribute="leading" secondItem="wvP-nV-b3q" secondAttribute="leading" constant="16" id="lTO-ga-DLB"/>
+                                    <constraint firstAttribute="trailing" secondItem="zDt-m7-cfL" secondAttribute="trailing" constant="16" id="pXi-VJ-vBf"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="16"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -41,16 +87,27 @@
                             <constraint firstItem="Ar0-4V-vYl" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="5G2-Hm-znV"/>
                             <constraint firstItem="Ar0-4V-vYl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="C08-7r-J8U"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="EO3-IV-8r0" secondAttribute="trailing" id="CIj-As-iJU"/>
+                            <constraint firstItem="wvP-nV-b3q" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="HkX-OD-bVE"/>
                             <constraint firstItem="EO3-IV-8r0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="XQY-UC-QFj"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="4LB-0A-cgX" secondAttribute="bottom" constant="16" id="aLC-vU-1rj"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ar0-4V-vYl" secondAttribute="trailing" constant="32" id="ahs-vI-gbC"/>
                             <constraint firstItem="EO3-IV-8r0" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="h8n-4X-4or"/>
+                            <constraint firstItem="4LB-0A-cgX" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="kO5-Ge-Du6"/>
+                            <constraint firstItem="4LB-0A-cgX" firstAttribute="top" secondItem="wvP-nV-b3q" secondAttribute="bottom" constant="16" id="uG0-p5-RgZ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" title="Pollutant Standards Index" id="d9i-JT-QXe"/>
                     <connections>
+                        <outlet property="btnNationalDetails" destination="4LB-0A-cgX" id="yL3-RD-cmx"/>
                         <outlet property="lblAppStatus" destination="Ar0-4V-vYl" id="Vy5-eB-P25"/>
+                        <outlet property="lblNationalDetails" destination="zDt-m7-cfL" id="Xz9-jv-7i4"/>
                         <outlet property="mapView" destination="EO3-IV-8r0" id="Lst-Kp-A9i"/>
+                        <outlet property="nationalDetailsView" destination="wvP-nV-b3q" id="5jG-Wv-GNj"/>
+                        <outlet property="nationalDetailsViewBottomConstraint" destination="uG0-p5-RgZ" id="cqM-EO-aHf"/>
+                        <outlet property="nationalDetailsViewHeightConstraint" destination="2Ib-K9-Ube" id="kjf-w9-FNi"/>
+                        <outlet property="nationalDetailsViewLeadingConstraint" destination="HkX-OD-bVE" id="ccI-Jx-zHX"/>
+                        <outlet property="nationalDetailsViewWidthConstraint" destination="8Dr-CI-rdw" id="DDQ-jE-Tbt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
