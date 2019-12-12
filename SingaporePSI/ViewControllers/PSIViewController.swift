@@ -29,33 +29,51 @@ class PSIViewController: UIViewController {
     @IBOutlet weak var nationalDetailsViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var nationalDetailsViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var nationalDetailsViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var btnInformation: UIButton!
+    @IBOutlet weak var informationDetailsView: UIView!
+    @IBOutlet weak var lblInformationDetails: UILabel!
+    @IBOutlet weak var informationViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var informationViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var informationViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var informationViewBottomConstraint: NSLayoutConstraint!
 
     fileprivate let regionRadius: CLLocationDistance = 60000
     fileprivate let baseURL = "https://api.data.gov.sg/v1/environment/psi"
-    fileprivate var nationalMetaDataDetails = ("", "")
+    fileprivate var nationalMetaDataDetails = ("", NSMutableAttributedString())
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.setViewsToTheirStates()
+        self.customiseNavigationBar()
 
         // set initial location to Singapore
         let initialLocationOnMap = CLLocation(latitude: 1.35735, longitude: 103.85)
         self.centerMapOnLocation(location: initialLocationOnMap)
         mapView.delegate = self
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
         let dateTimeString = self.getSingaporeDateTimeFromDate(date: Date())
         self.getPollutionDetailsFor(dateTime: dateTimeString)
     }
-
     private func setViewsToTheirStates() {
         lblAppStatus.isHidden = true
         btnNationalDetails.isHidden = true
         nationalDetailsView.isHidden = true
         nationalDetailsViewWidthConstraint.constant = 0
         nationalDetailsViewHeightConstraint.constant = 0
-        self.nationalDetailsViewBottomConstraint.constant = -4
-        nationalDetailsView.bringSubviewToFront(btnNationalDetails)
+        nationalDetailsViewBottomConstraint.constant = -4
+        btnInformation.isHidden = true
+        informationDetailsView.isHidden = true
+        informationViewWidthConstraint.constant = 0
+        informationViewHeightConstraint.constant = 0
+        informationViewBottomConstraint.constant = -4
+    }
+
+    fileprivate func customiseNavigationBar() {
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.53, green: 0.53, blue: 0.53, alpha: 0.7)
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
 
     //This methods converts date to a string in Singapore timezone.
@@ -75,9 +93,8 @@ class PSIViewController: UIViewController {
     }
 
     fileprivate func updateAppStatus(with appHealth: String) {
-
         let statusAttributedString = NSMutableAttributedString(
-            string: "App Status:- ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)])
+            string: "Enviornment Status:- ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)])
         let healthyColor = appHealth == "healthy" ? UIColor.green : UIColor.orange
         statusAttributedString.append(
             NSAttributedString(string: appHealth,
@@ -103,7 +120,7 @@ class PSIViewController: UIViewController {
             let psiReading = pollutionDetails.items[0].psiReadings
             if psiMetaData.direction != "national" {
                 let detailsTouple = self.getMetaDataStringWith(psiReading, with: psiMetaData.direction)
-                let pollutionAnnotation = PollutionAnnotation(title: detailsTouple.direction,
+                let pollutionAnnotation = PollutionAnnotation(title: "",
                                                               pollutionDetails: detailsTouple.metaData,
                                       coordinate: CLLocationCoordinate2D(
                                         latitude: psiMetaData.location.latitude,
@@ -113,6 +130,7 @@ class PSIViewController: UIViewController {
                 nationalMetaDataDetails = self.getMetaDataStringWith(psiReading, with: psiMetaData.direction)
                 DispatchQueue.main.async {[unowned self] in
                     self.btnNationalDetails.isHidden = false
+                    self.btnInformation.isHidden = false
                 }
             }
         }
@@ -121,107 +139,259 @@ class PSIViewController: UIViewController {
         }
     }
 
-    fileprivate func getMetaDataStringWith(_ psiReading: PSIReading,
-                                           with direction: String) -> (direction: String, metaData: String) {
-        var metaDataString = ""
+    fileprivate func getMetaDataStringWith(_
+        psiReading: PSIReading, with direction: String) -> (direction: String, metaData: NSMutableAttributedString) {
+        var metaDataString = NSMutableAttributedString()
         var directionStr = ""
         switch direction {
         case CardinalDirections.north.rawValue:
-            directionStr = "North"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.north)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.north)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t \(psiReading.pm10SubIndex.north)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.north)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.north)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.north)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.north)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.north)\n")
-            metaDataString.append("so2TwentyFourHourly:\t \(psiReading.so2TwentyFourHourly.north)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.north)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.north)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.north)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: North\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForNorth(psiReading: psiReading, metaDataString: &metaDataString)
         case CardinalDirections.south.rawValue:
-            directionStr = "South"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.south)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.south)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t \(psiReading.pm10SubIndex.south)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.south)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.south)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.south)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.south)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.south)\n")
-            metaDataString.append("so2TwentyFourHourly:\t \(psiReading.so2TwentyFourHourly.south)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.south)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.south)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.south)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: South\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForSouth(psiReading: psiReading, metaDataString: &metaDataString)
         case CardinalDirections.east.rawValue:
-            directionStr = "East"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.east)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.east)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t \(psiReading.pm10SubIndex.east)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.east)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.east)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.east)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.east)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.east)\n")
-            metaDataString.append("so2TwentyFourHourly:\t \(psiReading.so2TwentyFourHourly.east)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.east)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.east)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.east)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: East\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForEast(psiReading: psiReading, metaDataString: &metaDataString)
         case CardinalDirections.west.rawValue:
-            directionStr = "West"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.west)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.west)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t \(psiReading.pm10SubIndex.west)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.west)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.west)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.west)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.west)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.west)\n")
-            metaDataString.append("so2TwentyFourHourly:\t \(psiReading.so2TwentyFourHourly.west)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.west)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.west)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.west)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: West\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForWest(psiReading: psiReading, metaDataString: &metaDataString)
         case CardinalDirections.central.rawValue:
-            directionStr = "Central"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.central)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.central)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t \(psiReading.pm10SubIndex.central)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.central)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.central)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.central)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.central)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.central)\n")
-            metaDataString.append("so2TwentyFourHourly:\t \(psiReading.so2TwentyFourHourly.central)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.central)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.central)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.central)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: Central\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForCentral(psiReading: psiReading, metaDataString: &metaDataString)
         case CardinalDirections.national.rawValue:
-            directionStr = "National"
-            metaDataString = "o3SubIndex:\t\t\t\t \(psiReading.o3SubIndex.national)\n"
-            metaDataString.append("pm10TwentyFourHourly:\t \(psiReading.pm10TwentyFourHourly.national)\n")
-            metaDataString.append("pm10SubIndex:\t\t\t\t \(psiReading.pm10SubIndex.national)\n")
-            metaDataString.append("coSubIndex:\t\t\t\t \(psiReading.coSubIndex.national)\n")
-            metaDataString.append("pm25TwentyFourHourly:\t \(psiReading.pm25TwentyFourHourly.national)\n")
-            metaDataString.append("so2SubIndex:\t\t\t\t \(psiReading.so2SubIndex.national)\n")
-            metaDataString.append("coEightHourMax:\t\t\t \(psiReading.coEightHourMax.national)\n")
-            metaDataString.append("no2OneHourMax:\t\t\t \(psiReading.no2OneHourMax.national)\n")
-            metaDataString.append("so2TwentyFourHourly:\t\t \(psiReading.so2TwentyFourHourly.national)\n")
-            metaDataString.append("pm25SubIndex:\t\t\t \(psiReading.pm25SubIndex.national)\n")
-            metaDataString.append("psiTwentyFourHourly:\t\t \(psiReading.psiTwentyFourHourly.national)\n")
-            metaDataString.append("o3EightHourMax:\t\t\t \(psiReading.o3EightHourMax.national)")
+            self.getTitleAttributedStringWith(dataStr: "PSI Readings: National\n", attributedStr: &metaDataString)
+            self.getCompleteAttributedMetaDataStringForNational(psiReading: psiReading, metaDataString: &metaDataString)
         default:
-            metaDataString = ""
             directionStr = ""
         }
         return (directionStr, metaDataString)
+    }
+
+    private func getTitleAttributedStringWith(dataStr: String, attributedStr : inout NSMutableAttributedString) {
+        attributedStr = NSMutableAttributedString(attributedString:
+            NSAttributedString(string: dataStr, attributes:
+                [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
+                 NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]))
+    }
+
+    private func getCompleteAttributedMetaDataStringForNorth(psiReading: PSIReading,
+                                                             metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t",
+            valueStr: " \(psiReading.coEightHourMax.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.north)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.north)\n", attributedString: &metaDataString)
+    }
+
+    private func getCompleteAttributedMetaDataStringForSouth(psiReading: PSIReading,
+                                                             metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t",
+            valueStr: " \(psiReading.coEightHourMax.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.south)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.south)\n", attributedString: &metaDataString)
+    }
+
+    private func getCompleteAttributedMetaDataStringForWest(psiReading: PSIReading,
+                                                            metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t",
+            valueStr: " \(psiReading.coEightHourMax.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.west)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.west)\n", attributedString: &metaDataString)
+    }
+
+    private func getCompleteAttributedMetaDataStringForEast(psiReading: PSIReading,
+                                                            metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t",
+            valueStr: " \(psiReading.coEightHourMax.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.east)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.east)\n", attributedString: &metaDataString)
+    }
+
+    private func getCompleteAttributedMetaDataStringForCentral(psiReading: PSIReading,
+                                                               metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t",
+            valueStr: " \(psiReading.coEightHourMax.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.central)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.central)\n", attributedString: &metaDataString)
+    }
+
+    private func getCompleteAttributedMetaDataStringForNational(psiReading: PSIReading,
+                                                                metaDataString: inout NSMutableAttributedString) {
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.psiTwentyFourHourly.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3SubIndex):\t\t\t",
+            valueStr: " \(psiReading.o3SubIndex.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(o3EightHourMax):\t\t",
+            valueStr: " \(psiReading.o3EightHourMax.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm10SubIndex.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm10TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm10TwentyFourHourly.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25SubIndex):\t\t\t",
+            valueStr: " \(psiReading.pm25SubIndex.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(pm25TwentyFourHourly):\t\t",
+            valueStr: " \(psiReading.pm25TwentyFourHourly.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coSubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.coSubIndex.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(coEightHourMax):\t\t\t",
+            valueStr: " \(psiReading.coEightHourMax.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2SubIndex):\t\t\t\t",
+            valueStr: " \(psiReading.so2SubIndex.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(so2TwentyFourHourly):\t\t\t",
+            valueStr: " \(psiReading.so2TwentyFourHourly.national)\n", attributedString: &metaDataString)
+        self.combineStringsIntoAttributedStringWith(dataStr: "\(no2OneHourMax):\t\t\t",
+            valueStr: " \(psiReading.no2OneHourMax.national)\n", attributedString: &metaDataString)
+    }
+
+    private func combineStringsIntoAttributedStringWith(
+        dataStr: String, valueStr: String, attributedString metaDataStr : inout NSMutableAttributedString) {
+        metaDataStr.append(NSMutableAttributedString(
+            string: dataStr, attributes: [NSAttributedString.Key.backgroundColor: UIColor.clear]))
+        metaDataStr.append(NSMutableAttributedString(string: valueStr,
+            attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
+                         NSAttributedString.Key.backgroundColor: UIColor.clear]))
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4 // Whatever line spacing you want in points
+        metaDataStr.addAttribute(NSAttributedString.Key.paragraphStyle,
+                                 value: paragraphStyle, range: NSRange(location: 0, length: metaDataStr.length))
+    }
+
+    fileprivate func getCompleteInformationAttributedString(with infoAttributedStr : inout NSMutableAttributedString) {
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "PSI:-\t ", valueStr: "Pollutant Standards Index\n", attributedString: &infoAttributedStr)
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "PM10:-\t ", valueStr: "10 micrometer Particulate Matter\n", attributedString: &infoAttributedStr)
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "PM25:-\t ", valueStr: "2.5 micrometer Particulate Matter\n", attributedString: &infoAttributedStr)
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "CO:-\t ", valueStr: "Carbon monooxide\n", attributedString: &infoAttributedStr)
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "SO2:-\t ", valueStr: "Sulfur dioxide\n", attributedString: &infoAttributedStr)
+        self.combineInformationStringsIntoAttributedStringWith(
+            dataStr: "NO2:-\t ", valueStr: "Nitrogen oxide\n", attributedString: &infoAttributedStr)
+    }
+
+    private func combineInformationStringsIntoAttributedStringWith(
+        dataStr: String, valueStr: String, attributedString metaDataStr : inout NSMutableAttributedString) {
+        metaDataStr.append(NSMutableAttributedString(
+            string: dataStr, attributes: [NSAttributedString.Key.backgroundColor: UIColor.clear,
+                                          NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 13)]))
+        metaDataStr.append(NSMutableAttributedString(string: valueStr,
+            attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13),
+                         NSAttributedString.Key.backgroundColor: UIColor.clear]))
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4 // Whatever line spacing you want in points
+        metaDataStr.addAttribute(NSAttributedString.Key.paragraphStyle,
+                                 value: paragraphStyle, range: NSRange(location: 0, length: metaDataStr.length))
     }
 
     private func nationalDetailsViewCurveEaseOutAnimation() {
         self.nationalDetailsView.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.nationalDetailsViewWidthConstraint.constant = 282
-            self.nationalDetailsViewHeightConstraint.constant = 280
+            self.nationalDetailsViewHeightConstraint.constant = 330
             self.nationalDetailsViewLeadingConstraint.constant = 32
             self.nationalDetailsViewBottomConstraint.constant = 16
             self.view.layoutIfNeeded()
@@ -240,19 +410,72 @@ class PSIViewController: UIViewController {
         }
     }
 
+    private func informationViewCurveEaseOutAnimation() {
+        self.informationDetailsView.isHidden = false
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
+            self.informationViewWidthConstraint.constant = 300
+            self.informationViewHeightConstraint.constant = 150
+            self.informationViewTrailingConstraint.constant = 32
+            self.informationViewBottomConstraint.constant = 16
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+
+    private func informationViewCurveEaseInAnimation() {
+        UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+            self.informationViewWidthConstraint.constant = 0
+            self.informationViewHeightConstraint.constant = 0
+            self.informationViewTrailingConstraint.constant = 56
+            self.informationViewBottomConstraint.constant = -4
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            self.informationDetailsView.isHidden = true
+        }
+    }
+
+    fileprivate func deSelectAnnotationViews() {
+        let annonations = mapView.annotations
+        for index in 0..<annonations.count {
+            mapView.deselectAnnotation(annonations[index], animated: true)
+        }
+    }
+
     // MARK: - IBAction Methods
     @IBAction func showNationalPollutionDetails(_ sender: UIButton) {
-        lblNationalDetails.text = "\(nationalMetaDataDetails.0)\n\(nationalMetaDataDetails.1)"
+        lblNationalDetails.attributedText = nationalMetaDataDetails.1
         if self.nationalDetailsView.isHidden {
             self.nationalDetailsViewCurveEaseOutAnimation()
         } else {
             self.nationalDetailsViewCurveEaseInAnimation()
         }
+
+        if self.informationDetailsView.isHidden == false {
+            self.informationViewCurveEaseInAnimation()
+        }
+        self.deSelectAnnotationViews()
+    }
+
+    @IBAction func showInformation(_ sender: UIButton) {
+        var infoAttributesStr = NSMutableAttributedString()
+        self.getCompleteInformationAttributedString(with: &infoAttributesStr)
+        lblInformationDetails.attributedText = infoAttributesStr
+        if self.informationDetailsView.isHidden {
+            self.informationViewCurveEaseOutAnimation()
+        } else {
+            self.informationViewCurveEaseInAnimation()
+        }
+
+        if self.nationalDetailsView.isHidden == false {
+            self.nationalDetailsViewCurveEaseInAnimation()
+        }
+        self.deSelectAnnotationViews()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.nationalDetailsView.isHidden == false {
             self.nationalDetailsViewCurveEaseInAnimation()
+        } else if self.informationDetailsView.isHidden == false {
+            self.informationViewCurveEaseInAnimation()
         }
     }
 
@@ -276,7 +499,7 @@ extension PSIViewController: MKMapViewDelegate {
         }
 
          let subTitleLabel = UILabel()
-         subTitleLabel.text = annotation.pollutionDetails
+         subTitleLabel.attributedText = annotation.pollutionDetails
 
          view.detailCalloutAccessoryView = subTitleLabel
         view.animatesDrop = true
@@ -334,7 +557,8 @@ extension PSIViewController {
     fileprivate func getPollutionDetailsFor(dateTime: String) {
         let defaultSession = URLSession(configuration: .default)
 
-        let dataTask = defaultSession.dataTask(with: self.getPollutionApiRequest(with: dateTime)!) { [unowned self] data, response, error in
+        let dataTask = defaultSession.dataTask(
+        with: self.getPollutionApiRequest(with: dateTime)!) { [unowned self] data, response, error in
             if (response as? HTTPURLResponse)?.statusCode == 200 {
                 guard let pollutionData = data else { return }
                 do {
@@ -343,13 +567,26 @@ extension PSIViewController {
                     self.createAnnotationsForAllCardinalDirectionsWith(pollutionDetails)
                 } catch {
                     print("JSON Data Parsing Error : \(error)")
+                    self.showUnableToLoadDataAlert()
                 }
-
             } else {
-
+                self.showUnableToLoadDataAlert()
             }
         }
         dataTask.resume()
     }
 
+    private func showUnableToLoadDataAlert() {
+        let errorAlert = UIAlertController(title: "Error!", message: "Unable to load data.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .default) { (_) in
+
+        }
+        errorAlert.addAction(okAction)
+        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [unowned self] (_) in
+            let dateTimeString = self.getSingaporeDateTimeFromDate(date: Date())
+            self.getPollutionDetailsFor(dateTime: dateTimeString)
+        }
+        errorAlert.addAction(tryAgainAction)
+        self.present(errorAlert, animated: true)
+    }
 }

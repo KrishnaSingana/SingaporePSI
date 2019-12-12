@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A36433F23A212AB003965D6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36433E23A212AB003965D6 /* Constants.swift */; };
 		9A51B4E0239F6B9E0091BFAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4DF239F6B9E0091BFAA /* AppDelegate.swift */; };
 		9A51B4E2239F6B9E0091BFAA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4E1239F6B9E0091BFAA /* SceneDelegate.swift */; };
 		9A51B4E4239F6B9E0091BFAA /* PSIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4E3239F6B9E0091BFAA /* PSIViewController.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A36433E23A212AB003965D6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9A51B4DC239F6B9E0091BFAA /* SingaporePSI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingaporePSI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A51B4DF239F6B9E0091BFAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A51B4E1239F6B9E0091BFAA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A36433D23A2129F003965D6 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				9A36433E23A212AB003965D6 /* Constants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
 		9A51B4D3239F6B9E0091BFAA = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +117,7 @@
 				9A51B517239FC0500091BFAA /* ViewControllers */,
 				9A51B518239FC05E0091BFAA /* Models */,
 				9A51B516239FC03F0091BFAA /* JSONParser */,
+				9A36433D23A2129F003965D6 /* Constants */,
 				9A51B4E5239F6B9E0091BFAA /* Main.storyboard */,
 				9A51B4E8239F6B9F0091BFAA /* Assets.xcassets */,
 				9A51B4EA239F6B9F0091BFAA /* LaunchScreen.storyboard */,
@@ -302,6 +313,7 @@
 				9A51B510239F755A0091BFAA /* PollutionAnnotation.swift in Sources */,
 				9A51B4E0239F6B9E0091BFAA /* AppDelegate.swift in Sources */,
 				9A51B4E2239F6B9E0091BFAA /* SceneDelegate.swift in Sources */,
+				9A36433F23A212AB003965D6 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
