@@ -57,6 +57,7 @@ class PSIViewController: UIViewController {
         let dateTimeString = self.getSingaporeDateTimeFromDate(date: Date())
         self.getPollutionDetailsFor(dateTime: dateTimeString)
     }
+
     private func setViewsToTheirStates() {
         lblAppStatus.isHidden = true
         btnNationalDetails.isHidden = true
@@ -168,7 +169,7 @@ class PSIViewController: UIViewController {
         return (directionStr, metaDataString)
     }
 
-    private func getTitleAttributedStringWith(dataStr: String, attributedStr : inout NSMutableAttributedString) {
+    internal func getTitleAttributedStringWith(dataStr: String, attributedStr : inout NSMutableAttributedString) {
         attributedStr = NSMutableAttributedString(attributedString:
             NSAttributedString(string: dataStr, attributes:
                 [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16),
@@ -343,7 +344,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.national)\n", attributedString: &metaDataString)
     }
 
-    private func combineStringsIntoAttributedStringWith(
+    internal func combineStringsIntoAttributedStringWith(
         dataStr: String, valueStr: String, attributedString metaDataStr : inout NSMutableAttributedString) {
         metaDataStr.append(NSMutableAttributedString(
             string: dataStr, attributes: [NSAttributedString.Key.backgroundColor: UIColor.clear]))
@@ -387,7 +388,7 @@ class PSIViewController: UIViewController {
                                  value: paragraphStyle, range: NSRange(location: 0, length: metaDataStr.length))
     }
 
-    private func nationalDetailsViewCurveEaseOutAnimation() {
+    internal func nationalDetailsViewCurveEaseOutAnimation() {
         self.nationalDetailsView.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.nationalDetailsViewWidthConstraint.constant = 282
@@ -398,7 +399,7 @@ class PSIViewController: UIViewController {
         }, completion: nil)
     }
 
-    private func nationalDetailsViewCurveEaseInAnimation() {
+    internal func nationalDetailsViewCurveEaseInAnimation() {
         UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
             self.nationalDetailsViewWidthConstraint.constant = 0
             self.nationalDetailsViewHeightConstraint.constant = 0
@@ -410,7 +411,7 @@ class PSIViewController: UIViewController {
         }
     }
 
-    private func informationViewCurveEaseOutAnimation() {
+    internal func informationViewCurveEaseOutAnimation() {
         self.informationDetailsView.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.informationViewWidthConstraint.constant = 300
@@ -421,7 +422,7 @@ class PSIViewController: UIViewController {
         }, completion: nil)
     }
 
-    private func informationViewCurveEaseInAnimation() {
+    internal func informationViewCurveEaseInAnimation() {
         UIView.animate(withDuration: 0.5, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
             self.informationViewWidthConstraint.constant = 0
             self.informationViewHeightConstraint.constant = 0
