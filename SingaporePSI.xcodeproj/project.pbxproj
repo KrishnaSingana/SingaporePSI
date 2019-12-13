@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		9A36433F23A212AB003965D6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36433E23A212AB003965D6 /* Constants.swift */; };
+		9A36434123A35AC0003965D6 /* PSIMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36434023A35AC0003965D6 /* PSIMetaData.swift */; };
+		9A36434323A35AD8003965D6 /* PSILocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36434223A35AD8003965D6 /* PSILocation.swift */; };
+		9A36434523A35AF3003965D6 /* PSIItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36434423A35AF3003965D6 /* PSIItem.swift */; };
+		9A36434723A35B10003965D6 /* PSIReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36434623A35B10003965D6 /* PSIReading.swift */; };
+		9A36434923A35B2D003965D6 /* PSISubReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A36434823A35B2D003965D6 /* PSISubReading.swift */; };
 		9A51B4E0239F6B9E0091BFAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4DF239F6B9E0091BFAA /* AppDelegate.swift */; };
 		9A51B4E2239F6B9E0091BFAA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4E1239F6B9E0091BFAA /* SceneDelegate.swift */; };
 		9A51B4E4239F6B9E0091BFAA /* PSIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A51B4E3239F6B9E0091BFAA /* PSIViewController.swift */; };
@@ -39,6 +44,11 @@
 
 /* Begin PBXFileReference section */
 		9A36433E23A212AB003965D6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		9A36434023A35AC0003965D6 /* PSIMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSIMetaData.swift; sourceTree = "<group>"; };
+		9A36434223A35AD8003965D6 /* PSILocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSILocation.swift; sourceTree = "<group>"; };
+		9A36434423A35AF3003965D6 /* PSIItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSIItem.swift; sourceTree = "<group>"; };
+		9A36434623A35B10003965D6 /* PSIReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSIReading.swift; sourceTree = "<group>"; };
+		9A36434823A35B2D003965D6 /* PSISubReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PSISubReading.swift; sourceTree = "<group>"; };
 		9A51B4DC239F6B9E0091BFAA /* SingaporePSI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingaporePSI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A51B4DF239F6B9E0091BFAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A51B4E1239F6B9E0091BFAA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -148,6 +158,11 @@
 			isa = PBXGroup;
 			children = (
 				9A51B51A239FC0D40091BFAA /* PollutionDetails.swift */,
+				9A36434023A35AC0003965D6 /* PSIMetaData.swift */,
+				9A36434223A35AD8003965D6 /* PSILocation.swift */,
+				9A36434423A35AF3003965D6 /* PSIItem.swift */,
+				9A36434623A35B10003965D6 /* PSIReading.swift */,
+				9A36434823A35B2D003965D6 /* PSISubReading.swift */,
 			);
 			path = JSONParser;
 			sourceTree = "<group>";
@@ -308,10 +323,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A36434123A35AC0003965D6 /* PSIMetaData.swift in Sources */,
+				9A36434323A35AD8003965D6 /* PSILocation.swift in Sources */,
 				9A51B4E4239F6B9E0091BFAA /* PSIViewController.swift in Sources */,
 				9A51B51B239FC0D40091BFAA /* PollutionDetails.swift in Sources */,
 				9A51B510239F755A0091BFAA /* PollutionAnnotation.swift in Sources */,
+				9A36434923A35B2D003965D6 /* PSISubReading.swift in Sources */,
+				9A36434523A35AF3003965D6 /* PSIItem.swift in Sources */,
 				9A51B4E0239F6B9E0091BFAA /* AppDelegate.swift in Sources */,
+				9A36434723A35B10003965D6 /* PSIReading.swift in Sources */,
 				9A51B4E2239F6B9E0091BFAA /* SceneDelegate.swift in Sources */,
 				9A36433F23A212AB003965D6 /* Constants.swift in Sources */,
 			);
