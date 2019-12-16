@@ -58,6 +58,7 @@ class PSIViewController: UIViewController {
         self.getPollutionDetailsFor(dateTime: dateTimeString)
     }
 
+    //  Setting up view's position to support animation
     private func setViewsToTheirStates() {
         lblAppStatus.isHidden = true
         btnNationalDetails.isHidden = true
@@ -72,12 +73,13 @@ class PSIViewController: UIViewController {
         informationViewBottomConstraint.constant = -4
     }
 
+    // This is used for customising navigation bar
     fileprivate func customiseNavigationBar() {
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.53, green: 0.53, blue: 0.53, alpha: 0.7)
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
     }
 
-    //This methods converts date to a string in Singapore timezone.
+    //  This methods converts date to a string in Singapore timezone.
     func getSingaporeDateTimeFromDate(date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -87,12 +89,14 @@ class PSIViewController: UIViewController {
         return dateTimeString
     }
 
+    //  This method is used for showing complete singapore map on screen.
     fileprivate func centerMapOnLocation(location: CLLocation) {
         let coordinateRegion = MKCoordinateRegion(center: location.coordinate,
                                                   latitudinalMeters: regionRadius, longitudinalMeters: regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
     }
 
+    //  This method is used for updating Enviornment status after fetching info from api.
     fileprivate func updateAppStatus(with appHealth: String) {
         let statusAttributedString = NSMutableAttributedString(
             string: "Enviornment Status:- ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)])
@@ -114,6 +118,7 @@ class PSIViewController: UIViewController {
         }
     }
 
+    //  This is used for creating Pin Annonations based on Location points that fetched from api.
     fileprivate func createAnnotationsForAllCardinalDirectionsWith(_ pollutionDetails: PollutionDetails) {
         var annotationsArray = [PollutionAnnotation]()
         for index in 0..<pollutionDetails.regionsMetadata.count {
@@ -140,8 +145,11 @@ class PSIViewController: UIViewController {
         }
     }
 
-    fileprivate func getMetaDataStringWith(_
-        psiReading: PSIReading, with direction: String) -> (direction: String, metaData: NSMutableAttributedString) {
+    //  This method is used for generating complete Attributed string with respective pollution data for
+    //  different cordinal directions.
+    fileprivate func getMetaDataStringWith(_ psiReading: PSIReading,
+                                           with direction: String) ->
+        (direction: String, metaData: NSMutableAttributedString) {
         var metaDataString = NSMutableAttributedString()
         var directionStr = ""
         switch direction {
@@ -169,6 +177,7 @@ class PSIViewController: UIViewController {
         return (directionStr, metaDataString)
     }
 
+    //  This method is used for adding attributes for title message
     internal func getTitleAttributedStringWith(dataStr: String, attributedStr : inout NSMutableAttributedString) {
         attributedStr = NSMutableAttributedString(attributedString:
             NSAttributedString(string: dataStr, attributes:
@@ -176,6 +185,7 @@ class PSIViewController: UIViewController {
                  NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]))
     }
 
+    //  This method is used for generating Attributed string for North.
     private func getCompleteAttributedMetaDataStringForNorth(psiReading: PSIReading,
                                                              metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -204,6 +214,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.north)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for generating Attributed string for South.
     private func getCompleteAttributedMetaDataStringForSouth(psiReading: PSIReading,
                                                              metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -232,6 +243,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.south)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for generating Attributed string for West.
     private func getCompleteAttributedMetaDataStringForWest(psiReading: PSIReading,
                                                             metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -260,6 +272,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.west)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for generating Attributed string for East.
     private func getCompleteAttributedMetaDataStringForEast(psiReading: PSIReading,
                                                             metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -288,6 +301,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.east)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for generating Attributed string for Central.
     private func getCompleteAttributedMetaDataStringForCentral(psiReading: PSIReading,
                                                                metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -316,6 +330,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.central)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for generating Attributed string for National.
     private func getCompleteAttributedMetaDataStringForNational(psiReading: PSIReading,
                                                                 metaDataString: inout NSMutableAttributedString) {
         self.combineStringsIntoAttributedStringWith(dataStr: "\(psiTwentyFourHourly):\t\t\t",
@@ -344,6 +359,7 @@ class PSIViewController: UIViewController {
             valueStr: " \(psiReading.no2OneHourMax.national)\n", attributedString: &metaDataString)
     }
 
+    //  This method is used for combining data and value strings and appending it to attrinutrd string
     internal func combineStringsIntoAttributedStringWith(
         dataStr: String, valueStr: String, attributedString metaDataStr : inout NSMutableAttributedString) {
         metaDataStr.append(NSMutableAttributedString(
@@ -358,6 +374,7 @@ class PSIViewController: UIViewController {
                                  value: paragraphStyle, range: NSRange(location: 0, length: metaDataStr.length))
     }
 
+    //  This method is used for creating attributed string with string full forms that showed on click of info button.
     fileprivate func getCompleteInformationAttributedString(with infoAttributedStr : inout NSMutableAttributedString) {
         self.combineInformationStringsIntoAttributedStringWith(
             dataStr: "PSI:-\t ", valueStr: "Pollutant Standards Index\n", attributedString: &infoAttributedStr)
@@ -373,6 +390,7 @@ class PSIViewController: UIViewController {
             dataStr: "NO2:-\t ", valueStr: "Nitrogen oxide\n", attributedString: &infoAttributedStr)
     }
 
+    //  This method is used for combining data & value string and adding attributes to attributed string.
     private func combineInformationStringsIntoAttributedStringWith(
         dataStr: String, valueStr: String, attributedString metaDataStr : inout NSMutableAttributedString) {
         metaDataStr.append(NSMutableAttributedString(
@@ -406,9 +424,9 @@ class PSIViewController: UIViewController {
             self.nationalDetailsViewLeadingConstraint.constant = 56
             self.nationalDetailsViewBottomConstraint.constant = -4
             self.view.layoutIfNeeded()
-        }) { (_) in
+        }, completion: { _ in
             self.nationalDetailsView.isHidden = true
-        }
+        })
     }
 
     internal func informationViewCurveEaseOutAnimation() {
@@ -429,9 +447,9 @@ class PSIViewController: UIViewController {
             self.informationViewTrailingConstraint.constant = 56
             self.informationViewBottomConstraint.constant = -4
             self.view.layoutIfNeeded()
-        }) { (_) in
+        }, completion: { _ in
             self.informationDetailsView.isHidden = true
-        }
+        })
     }
 
     fileprivate func deSelectAnnotationViews() {
