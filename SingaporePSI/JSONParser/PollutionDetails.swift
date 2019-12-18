@@ -9,14 +9,22 @@
 import Foundation
 
 struct PollutionDetails: Codable {
-    var regionsMetadata: [PSIMetaData]
-    var items: [PSIItem]
-    var appInfo: AppInfo
+    var regionsMetadata: [PSIMetaData]?
+    var items: [PSIItem]?
+    var appInfo: AppInfo?
 
     private enum CodingKeys: String, CodingKey {
         case regionsMetadata = "region_metadata"
         case items = "items"
         case appInfo = "api_info"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        regionsMetadata = try container.decodeIfPresent([PSIMetaData].self, forKey: .regionsMetadata)
+        items = try container.decodeIfPresent([PSIItem].self, forKey: .items)
+        appInfo = try container.decodeIfPresent(AppInfo.self, forKey: .appInfo)
     }
 }
 

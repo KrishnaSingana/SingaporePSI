@@ -11,7 +11,7 @@ import Foundation
 struct PSIItem: Codable {
     var timeStamp: String?
     var updateTimeStamp: String?
-    var psiReadings: PSIReading
+    var psiReadings: PSIReading?
 
     private enum CodingKeys: String, CodingKey {
         case timeStamp = "timestamp"
@@ -24,6 +24,6 @@ struct PSIItem: Codable {
 
         timeStamp = try container.decodeIfPresent(String.self, forKey: .timeStamp)
         updateTimeStamp = try container.decodeIfPresent(String.self, forKey: .updateTimeStamp)
-        psiReadings = try container.decode(PSIReading.self, forKey: .psiReadings)
+        psiReadings = try container.decodeIfPresent(PSIReading.self, forKey: .psiReadings)
     }
 }

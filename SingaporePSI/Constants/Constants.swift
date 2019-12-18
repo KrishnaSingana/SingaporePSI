@@ -20,3 +20,5 @@ var so2TwentyFourHourly = "SO2 (in 24 hours)"
 var pm25SubIndex = "PM25 Sub Index"
 var psiTwentyFourHourly = "PSI (in 24 hours)"
 var o3EightHourMax = "Ozone (8 hours max)"
+
+let alertMessageString = "Currently there is no data available. \n Please try after some time."
